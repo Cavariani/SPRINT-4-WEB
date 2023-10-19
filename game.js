@@ -1,24 +1,46 @@
+// Mova a função para o escopo global
+function updateRoboImage(roboId, imagePath) {
+    console.log('Imagem clicada:', imagePath);
+    const robo = document.getElementById(roboId);
+    if (robo) {
+        robo.src = imagePath;
+        console.log('Imagem do robô atualizada para:', imagePath);
+    } else {
+        console.log('Elemento robô não encontrado para o ID:', roboId);
+    }
+}
 document.addEventListener('DOMContentLoaded', (event) => {
     const startScreen = document.getElementById('startScreen');
     const startButton = document.getElementById('startButton');
     const gameMusic = document.getElementById('gameMusic');
 
     startButton.addEventListener('click', () => {
-        startScreen.style.display = 'none';
-        gameMusic.play();
+        startButton.style.display = 'none'; // Esconde o botão iniciar após ser clicado
+        let countdownValue = 3; // Inicia a contagem regressiva em 3
+        const countdownElement = document.createElement('div'); // Cria um novo elemento div para exibir a contagem regressiva
+        countdownElement.id = 'countdown';
+        
+        // Modifica o tamanho da fonte e a cor do texto
+        countdownElement.style.fontSize = '200px'; // Ajuste o valor conforme necessário
+        countdownElement.style.color = '#ed145b'; // Ajuste a cor conforme necessário
+        
+        countdownElement.style.textAlign = 'center';
+        countdownElement.style.marginTop = '20px';
+        countdownElement.innerText = countdownValue; // Define o texto inicial do elemento da contagem regressiva
+        startScreen.appendChild(countdownElement); // Adiciona o elemento da contagem regressiva à tela inicial
+
+        const countdownInterval = setInterval(() => {
+            countdownValue--; // Decrementa o valor da contagem regressiva
+            countdownElement.innerText = countdownValue; // Atualiza o texto do elemento da contagem regressiva
+
+            if (countdownValue === 0) {
+                clearInterval(countdownInterval); // Para o intervalo quando a contagem regressiva chegar a 0
+                startScreen.style.display = 'none';
+                gameMusic.play();
+            }
+        }, 1000); // Atualiza a contagem regressiva a cada 1000 milissegundos (1 segundo)
     });
 
-    // Mova a função para o escopo global
-    function updateRoboImage(roboId, imagePath) {
-        console.log('Imagem clicada:', imagePath);
-        const robo = document.getElementById(roboId);
-        if (robo) {
-            robo.src = imagePath;
-            console.log('Imagem do robô atualizada para:', imagePath);
-        } else {
-            console.log('Elemento robô não encontrado para o ID:', roboId);
-        }
-    }
 
     const ROBO1_KEYS = {
         left: 37,
@@ -117,6 +139,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             if (robo1Life <= 0 || robo2Life <= 0) {
                 gameMusic.pause();
                 gameMusic.currentTime = 0;
+                
                 alert('Fim de jogo! ' + (robo1Life > robo2Life ? 'Robô I' : 'Robô II') + ' ganhou com ' +
                     (robo1Life > robo2Life ? robo1Life : robo2Life) + ' de vida restante!');
                 location.reload();
